@@ -1,0 +1,7 @@
+dist
+node_modules
+*.mnaddon
+
+# MacOS
+.DS_Store
+
