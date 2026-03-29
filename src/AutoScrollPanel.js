@@ -1,5 +1,5 @@
 function buildAutoScrollPanel(addon) {
-  var panel = new UIView({ x: 0, y: 0, width: 220, height: 255 });
+  var panel = new UIView({ x: 0, y: 0, width: 220, height: 253 });
   panel.hidden = true;
   panel.backgroundColor = UIColor.colorWithRedGreenBlueAlpha(
     0.12,
@@ -134,7 +134,7 @@ function refreshAutoScrollPanel(addon) {
   addon.autoScrollState.speedSlider.value =
     addon.autoScrollState.speedPointsPerSecond;
   addon.autoScrollState.handwritingDelayLabel.text =
-    "Resume Delay: " +
+    "Scroll After Write: " +
     addon.autoScrollState.handwritingResumeDelaySeconds.toFixed(1) +
     "s";
   addon.autoScrollState.handwritingDelaySlider.value =

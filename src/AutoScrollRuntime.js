@@ -156,7 +156,7 @@ function getDefaultAutoScrollPanelFrame(addon) {
     x: bounds.width - 236,
     y: 78,
     width: 220,
-    height: 248,
+    height: 253,
   };
 }
 
