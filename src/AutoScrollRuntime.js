@@ -395,23 +395,61 @@ function performAutoScrollTick(addon) {
 }
 
 function isAutoScrollHandwritingActive(view) {
+  return isAutoScrollHandwritingActiveInHierarchy(view);
+}
+
+function getAutoScrollGestureTouches(gesture) {
+  if (typeof gesture.numberOfTouches === "function") {
+    return gesture.numberOfTouches();
+  }
+  return 0;
+}
+
+function isAutoScrollHandwritingGestureActive(gesture, hostViewName) {
+  var gestureName = getAutoScrollViewName(gesture);
+  var touches = getAutoScrollGestureTouches(gesture);
+  var state = gesture.state;
+
+  if (gestureName.indexOf("UILongPressGestureRecognizer") >= 0 && touches > 0) {
+    return true;
+  }
+
+  if (
+    gestureName.indexOf("PKDrawingGestureRecognizer") >= 0 &&
+    (state === 1 || state === 2 || touches > 0)
+  ) {
+    return true;
+  }
+
+  if (hostViewName.indexOf("PK") >= 0 && (state === 1 || state === 2) && touches > 0) {
+    return true;
+  }
+
+  return false;
+}
+
+function isAutoScrollHandwritingActiveInHierarchy(view) {
+  var viewName = getAutoScrollViewName(view);
   var gestures = view.gestureRecognizers;
-  if (!gestures || !gestures.length) {
+  if (gestures && gestures.length) {
+    for (var i = 0; i < gestures.length; i++) {
+      var gesture = gestures[i];
+      if (!gesture) {
+        continue;
+      }
+      if (isAutoScrollHandwritingGestureActive(gesture, viewName)) {
+        return true;
+      }
+    }
+  }
+
+  var subviews = view.subviews;
+  if (!subviews || !subviews.length) {
     return false;
   }
 
-  for (var i = 0; i < gestures.length; i++) {
-    var gesture = gestures[i];
-    if (!gesture) {
-      continue;
-    }
-    if (getAutoScrollViewName(gesture).indexOf("UILongPressGestureRecognizer") < 0) {
-      continue;
-    }
-
-    var touches =
-      typeof gesture.numberOfTouches === "function" ? gesture.numberOfTouches() : 0;
-    if (touches > 0) {
+  for (var j = 0; j < subviews.length; j++) {
+    if (isAutoScrollHandwritingActiveInHierarchy(subviews[j])) {
       return true;
     }
   }
