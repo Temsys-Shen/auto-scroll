@@ -1,58 +1,41 @@
-# 标准插件(打包项目)开发模板
+# AutoScroll
 
-用于MarginNote4的标准插件工程模板(输出`.mnaddon`)。
+AutoScroll是一个MarginNote4自动滚动插件，面向长时间阅读与手写场景，支持悬浮控制面板、快捷键调速与手写时自动暂停。
 
-## 开始开发
+## 功能特性
 
-安装依赖：
+- 自动识别阅读器中的可滚动目标视图并持续下滑
+- 提供可拖拽悬浮面板，实时显示当前阅读进度
+- 支持滚动速度调节，范围为 `5`到 `400pt/s`
+- 支持手写后恢复延迟调节，范围为 `0.5s`到 `1.5s`
+- 识别手写动作并自动暂停，停笔后按设定延迟恢复
+- 滚动到底部后自动停止
+
+## 快捷键
+
+- `Space`开始或暂停自动滚动
+- `[`降低滚动速度
+- `]`提高滚动速度
+
+## 开发
+
+1. 安装依赖
 
 ```bash
 pnpm install
-# 或(使用npm时)
-npm install
 ```
 
-打包调试包(不压缩，适合频繁迭代)：
-
-```bash
-pnpm dev
-# 或(使用npm时)
-npm run dev
-```
-
-打包发布包(先压缩再打包)：
+2. 构建插件
 
 ```bash
 pnpm build
-# 或(使用npm时)
-npm run build
 ```
 
-在MarginNote4中导入生成的`.mnaddon`并启用即可。
+## 项目结构
 
-## 常用命令
-
-更新版本号(同时更新`package.json`与`src/mnaddon.json`)：
-
-```bash
-pnpm version:patch
-pnpm version:minor
-pnpm version:major
-```
-
-如果当前目录是干净的git工作区，会自动创建commit并打tag(例如`v0.2.0`)。
-
-## 发布到GitHubRelease
-
-推送tag后，GitHubActions会自动构建并把`*.mnaddon`上传到GitHubRelease：
-
-```bash
-pnpm version:patch
-git push
-git push --tags
-```
-
-## 注意事项
-
-- 请先读`AGENTS.md`，尤其是“只允许在`src/main.js`里调用`JSB.require(...)`”这条
-- MarginNote插件运行在JavaScriptCore环境中，不能按浏览器/Node.js假设(例如没有fetch/DOM/localStorage)
+- `src/main.js`插件入口，只负责 `JSB.require(...)`导入
+- `src/MNAutoScrollAddon.js`插件生命周期与命令入口
+- `src/AutoScrollRuntime.js`自动滚动核心状态、计时器与快捷键处理
+- `src/AutoScrollPanel.js`悬浮面板UI与布局刷新
+- `src/AutoScrollViewFinder.js`滚动目标视图识别逻辑
+- `src/mnaddon.json`插件元信息
